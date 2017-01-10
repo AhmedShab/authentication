@@ -5,13 +5,14 @@ const app = express();
 const mongoose = require('mongoose');
 
 const port = process.env.PORT || 3000;
-const router = require('./routes/router');
+const users = require('./routes/users');
 
 mongoose.connect('mongodb://localhost:auth/auth');
 
 app.use(morgan('combined'));
 app.use(bodyParser.json({type: '*/*'}));
-router(app);
+app.use('/', users);
+
 
 app.listen(port, function(){
   console.log('Server listening on port:', port);

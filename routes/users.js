@@ -19,8 +19,8 @@ router.get('/:id', function(req, res) {
 /*
  * POST
  */
-router.post('/', function(req, res) {
-    userController.create(req, res);
+router.post('/signup', function(req, res, next) {
+    userController.signup(req, res);
 });
 
 /*
