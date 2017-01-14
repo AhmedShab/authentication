@@ -1,4 +1,4 @@
-var userModel = require('../models/userModel.js');
+var User = require('../models/userModel.js');
 
 /**
  * userController.js
@@ -11,7 +11,7 @@ module.exports = {
      * userController.list()
      */
     list: function(req, res) {
-        userModel.find(function(err, users){
+        User.find(function(err, users){
             if(err) {
                 return res.json(500, {
                     message: 'Error getting user.'
@@ -26,7 +26,7 @@ module.exports = {
      */
     show: function(req, res) {
         var id = req.params.id;
-        userModel.findOne({_id: id}, function(err, user){
+        User.findOne({_id: id}, function(err, user){
             if(err) {
                 return res.json(500, {
                     message: 'Error getting user.'
@@ -45,7 +45,9 @@ module.exports = {
      * userController.create()
      */
     create: function(req, res) {
-        var user = new userModel({			email : req.body.email,			password : req.body.password
+        var user = new User({
+			email : req.body.email,
+			password : req.body.password
         });
 
         user.save(function(err, user){
@@ -67,7 +69,7 @@ module.exports = {
      */
     update: function(req, res) {
         var id = req.params.id;
-        userModel.findOne({_id: id}, function(err, user){
+        User.findOne({_id: id}, function(err, user){
             if(err) {
                 return res.json(500, {
                     message: 'Error saving user',
@@ -80,7 +82,8 @@ module.exports = {
                 });
             }
 
-            user.email =  req.body.email ? req.body.email : user.email;			user.password =  req.body.password ? req.body.password : user.password;
+            user.email =  req.body.email ? req.body.email : user.email;
+			user.password =  req.body.password ? req.body.password : user.password;
             user.save(function(err, user){
                 if(err) {
                     return res.json(500, {
@@ -102,7 +105,7 @@ module.exports = {
      */
     remove: function(req, res) {
         var id = req.params.id;
-        userModel.findByIdAndRemove(id, function(err, user){
+        User.findByIdAndRemove(id, function(err, user){
             if(err) {
                 return res.json(500, {
                     message: 'Error getting user.'
@@ -112,7 +115,36 @@ module.exports = {
         });
     },
 
-    signup: function(req, res){
-        res.send({success: true});
+    signup: function(req, res) {
+        const email = req.body.email;
+        const password = req.body.password;
+
+        if (!email || !password) {
+            return res.status(422).send({error: 'You must provide email and password'})
+        }
+        // See if a user with the given email exists
+        User.findOne({ email: email }, function (err, existingUser) {
+            if(err) return next(err);
+
+            // If a user with  does exist, return an error
+            if (existingUser) {
+                return res.status(422).send({ error: 'Email is in use' });
+            }
+
+            // If a user with  does NOT exist, create and save user record
+            const user = new User({
+                email: email,
+                password: password
+            });
+
+            user.save(function(err) {
+                if (err) return next(err);
+            });
+
+            // Respond to request indicting the user was created
+            res.json({ success: true });
+        });
+
+
     }
 };
