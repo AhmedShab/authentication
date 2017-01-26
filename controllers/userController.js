@@ -17,16 +17,9 @@ module.exports = {
     /**
      * userController.list()
      */
-    list: function(req, res) {
-        User.find(function(err, users){
-            if(err) {
-                return res.json(500, {
-                    message: 'Error getting user.'
-                });
-            }
-            return res.json(users);
-        });
-    },
+     list: function(req, res) {
+         return res.json({ hi: 'there' });
+     },
 
     /**
      * userController.show()

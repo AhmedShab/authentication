@@ -1,11 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController.js');
+const passportService = require('../services/passport');
+const passport = require('passport');
+
+const requireAuth = passport.authenticate('jwt', { session: false });
+
 
 /*
  * GET
  */
-router.get('/', function(req, res) {
+router.get('/', requireAuth, function(req, res) {
     userController.list(req, res);
 });
 
