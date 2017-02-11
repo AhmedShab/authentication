@@ -146,5 +146,10 @@ module.exports = {
         });
 
 
+    },
+
+    signin: function (req, res, next){
+      // After signing in, need to give the user a token
+      res.send({ token: tokenForUser(req.user) })
     }
 };
